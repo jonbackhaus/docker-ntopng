@@ -1,0 +1,33 @@
+# LAN Services
+#
+# [ntop](<https://github.com/ntop/docker-ntop>)
+# - PF_RING
+# - ntopng
+# - nProbe
+
+# Docker Compose version
+version: '3'
+
+services:
+  pfring:
+    build:
+      dockerfile: Dockerfile.pfring
+    network_mode: "host"
+    command: pfring pfcount -i ${ETH_IF}
+
+  ntopng:
+    build:
+      dockerfile: Dockerfile.ntopng
+    network_mode: "host"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ntop:/etc/ntopng
+      - /var/lib/ntopng:/var/lib/ntopng
+    command: ntopng -i ${ETH_IF} -m 10.0.1.1/24 -n 1 -d /var/lib/ntopng -q --community
+
+  nprobe:
+    build:
+      dockerfile: Dockerfile.nprobe
+    network_mode: "host"
+    command: nprobe -i ${ETH_IF}
