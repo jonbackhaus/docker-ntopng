@@ -9,15 +9,9 @@
 version: '3'
 
 services:
-  pfring:
+  ntopng-arm:
     build:
-      dockerfile: Dockerfile.pfring
-    network_mode: "host"
-    command: pfring pfcount -i ${ETH_IF}
-
-  ntopng:
-    build:
-      dockerfile: Dockerfile.ntopng
+      dockerfile: Dockerfile.arm
     network_mode: "host"
     ports:
       - "3000:3000"
@@ -25,9 +19,3 @@ services:
       - ./ntop:/etc/ntopng
       - /var/lib/ntopng:/var/lib/ntopng
     command: ntopng -i ${ETH_IF} -m 10.0.1.1/24 -n 1 -d /var/lib/ntopng -q --community
-
-  nprobe:
-    build:
-      dockerfile: Dockerfile.nprobe
-    network_mode: "host"
-    command: nprobe -i ${ETH_IF}
