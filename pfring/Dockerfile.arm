@@ -1,0 +1,15 @@
+FROM debian:9
+MAINTAINER ntop.org
+
+RUN apt-get update && \
+    apt-get -y -q install sudo apt-utils
+
+RUN apt-get update && \
+    apt-get -y -q install git wget lsb-release gnupg net-tools
+
+RUN git clone https://github.com/ntop/PF_RING.git
+
+RUN cd PF_RING/kernel; make install && \
+    cd ../userland/lib; make install
+
+CMD ["insmod", "./kernel/pf_ring.ko"]
