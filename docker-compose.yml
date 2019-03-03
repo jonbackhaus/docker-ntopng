@@ -13,6 +13,8 @@ services:
     build:
       context: ./ntopng
       dockerfile: Dockerfile.arm
+    image: ntop/ntopng
+    container_name: ntopng
     network_mode: host
     volumes:
       - /etc/ntopng:/etc/ntopng:ro
