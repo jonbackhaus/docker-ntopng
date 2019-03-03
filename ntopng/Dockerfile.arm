@@ -5,9 +5,9 @@ RUN apt-get update && \
     apt-get -y -q install sudo apt-utils
 
 RUN apt-get update && \
-    apt-get -y -q install wget lsb-release gnupg net-tools libterm-readline-gnu-perl
+    apt-get -y -q install curl lsb-release gnupg net-tools libterm-readline-gnu-perl netcat
 
-RUN wget http://packages.ntop.org/apt/ntop.key /tmp/ntop.key | apt-key add /tmp/ntop.key
+RUN curl -L http://packages.ntop.org/apt/ntop.key | apt-key add -
 
 RUN echo "deb http://apt.ntop.org/stretch_pi armhf/" > /etc/apt/sources.list.d/ntop.list && \
     echo "deb http://apt.ntop.org/stretch_pi all/" >> /etc/apt/sources.list.d/ntop.list
@@ -17,9 +17,13 @@ RUN apt-get update && \
 
 RUN chown -R ntopng:ntopng /var/lib/ntopng
 
+# COPY --chown=ntopng:ntopng etc/ntopng/ /etc/ntopng/
+
 RUN echo '#!/bin/bash\n/etc/init.d/redis-server start\nntopng "$@"' > /run.sh && \
     chmod +x /run.sh
 
 EXPOSE 3000
+
+HEALTHCHECK CMD /bin/nc -z localhost 3000 > /dev/null
 
 ENTRYPOINT ["/run.sh"]
