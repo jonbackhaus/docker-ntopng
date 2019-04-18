@@ -20,3 +20,4 @@ services:
       - /etc/ntopng:/etc/ntopng:ro
       - /var/lib/ntopng:/var/lib/ntopng
     command: ["/etc/ntopng/ntopng.conf"]
+    restart: unless-stopped
