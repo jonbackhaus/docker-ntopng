@@ -19,5 +19,10 @@ services:
     volumes:
       - /etc/ntopng:/etc/ntopng:ro
       - /var/lib/ntopng:/var/lib/ntopng
+    healthcheck:
+      test: curl --fail -s http://localhost:3000/ || exit 1
+      interval: 5m
+      timeout: 10s
+      retries: 3
     command: ["/etc/ntopng/ntopng.conf"]
     restart: unless-stopped
