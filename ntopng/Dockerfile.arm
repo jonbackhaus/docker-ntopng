@@ -24,6 +24,4 @@ RUN echo '#!/bin/bash\n/etc/init.d/redis-server start\nntopng "$@"' > /run.sh &&
 
 EXPOSE 3000
 
-HEALTHCHECK CMD /bin/nc -z localhost 3000 > /dev/null
-
 ENTRYPOINT ["/run.sh"]
