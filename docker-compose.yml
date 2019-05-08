@@ -16,6 +16,8 @@ services:
     image: ntop/ntopng
     container_name: ntopng
     network_mode: host
+    ports:
+      - 3000:3000
     volumes:
       - /etc/ntopng:/etc/ntopng:ro
       - /var/lib/ntopng:/var/lib/ntopng
