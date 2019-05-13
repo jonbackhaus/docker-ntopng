@@ -17,8 +17,6 @@ RUN apt-get update && \
 
 RUN chown -R ntopng:ntopng /var/lib/ntopng
 
-# COPY --chown=ntopng:ntopng etc/ntopng/ /etc/ntopng/
-
 RUN echo '#!/bin/bash\n/etc/init.d/redis-server start\nntopng "$@"' > /run.sh && \
     chmod +x /run.sh
 
