@@ -13,7 +13,7 @@ RUN echo "deb http://apt.ntop.org/stretch_pi armhf/" > /etc/apt/sources.list.d/n
     echo "deb http://apt.ntop.org/stretch_pi all/" >> /etc/apt/sources.list.d/ntop.list
 
 RUN apt-get update && \
-    apt-get -y install ntopng nprobe
+    apt-get -y install ntopng
 
 RUN chown -R ntopng:ntopng /var/lib/ntopng
 
