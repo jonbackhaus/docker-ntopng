@@ -10,10 +10,7 @@ version: '3'
 
 services:
   ntopng-arm:
-    build:
-      context: ./ntopng
-      dockerfile: Dockerfile.arm
-    image: ntop/ntopng
+    image: jonbackhaus/ntopng:latest
     container_name: ntopng
     network_mode: host
     ports:
