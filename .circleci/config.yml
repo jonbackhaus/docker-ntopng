@@ -5,6 +5,7 @@ executors:
       DOCKERHUB_USERNAME: jonbackhaus
       DOCKERHUB_REPONAME: ntopng
       IMAGE_NAME: $DOCKERHUB_USERNAME/$DOCKERHUB_REPONAME
+      DOCKER_CLI_EXPERIMENTAL: enabled
     docker:
       - image: circleci/buildpack-deps:stretch
 jobs:
@@ -17,6 +18,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
+            env
+            docker info
             docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
             docker build -t $IMAGE_NAME:latest -f $DOCKERHUB_REPONAME/Dockerfile.arm $DOCKERHUB_REPONAME
       - run:
