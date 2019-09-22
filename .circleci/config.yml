@@ -2,10 +2,7 @@ version: 2.1
 executors:
   docker-publisher:
     environment:
-      DOCKERHUB_USERNAME: jonbackhaus
-      DOCKERHUB_REPONAME: ntopng
-      IMAGE_NAME: $DOCKERHUB_USERNAME/$DOCKERHUB_REPONAME
-      DOCKER_CLI_EXPERIMENTAL: enabled
+      IMAGE_NAME: jonbackhaus/ntopng
     docker:
       - image: circleci/buildpack-deps:stretch
 jobs:
@@ -18,10 +15,10 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            env
+            DOCKER_CLI_EXPERIMENTAL=enabled
             docker info
             docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-            docker build -t $IMAGE_NAME:latest -f $DOCKERHUB_REPONAME/Dockerfile.arm $DOCKERHUB_REPONAME
+            docker build -t $IMAGE_NAME:latest -f ntopng/Dockerfile.arm ntopng
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $IMAGE_NAME
