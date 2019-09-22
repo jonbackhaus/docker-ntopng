@@ -15,7 +15,7 @@ jobs:
           name: Build Docker image
           command: |
             docker run --rm --privileged multiarch/qemu-user-static:register
-            docker build -t $IMAGE_NAME:latest -f Dockerfile.arm ntopng
+            docker build -t $IMAGE_NAME:latest -f ntopng/Dockerfile.arm ntopng
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $IMAGE_NAME
