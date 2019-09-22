@@ -1,0 +1,56 @@
+version: 2.1
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: jonbackhaus/ntopng
+    docker:
+      - image: circleci/buildpack-deps:stretch
+jobs:
+  build:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker run --rm --privileged multiarch/qemu-user-static:register
+            docker build -t $IMAGE_NAME:latest ntopng/Dockerfile.arm
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+  publish:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            COMMIT_TAGNAME=${CIRCLE_SHA1:0:7}; echo "COMMIT_TAGNAME=$COMMIT_TAGNAME"
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$COMMIT_TAGNAME
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:armv7
+            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:armv7
+            docker push $IMAGE_NAME:$COMMIT_TAGNAME
+workflows:
+  version: 2
+  build-master:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - publish:
+          requires:
+            - build
+          context: default
