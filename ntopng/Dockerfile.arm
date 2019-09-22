@@ -15,8 +15,7 @@ RUN echo "deb http://apt.ntop.org/stretch_pi armhf/" > /etc/apt/sources.list.d/n
 RUN apt-get update && \
     apt-get -y install ntopng
 
-RUN mkdir /var/lib/ntopng && \
-    chown -R ntopng:ntopng /var/lib/ntopng
+RUN chown -R ntopng:ntopng /var/lib/ntopng
 
 RUN echo '#!/bin/bash\n/etc/init.d/redis-server start\nntopng "$@"' > /run.sh && \
     chmod +x /run.sh
