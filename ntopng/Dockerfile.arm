@@ -1,11 +1,13 @@
-FROM arm32v7/debian:9
+FROM arm32v7/debian:9-slim
 MAINTAINER ntop.org
 
 RUN apt-get update && \
-    apt-get -y -q install sudo apt-utils
+    apt-get -y -q install sudo apt-utils && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \
-    apt-get -y -q install curl lsb-release gnupg net-tools libterm-readline-gnu-perl netcat
+    apt-get -y -q install curl lsb-release gnupg net-tools libterm-readline-gnu-perl netcat && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN curl -L http://packages.ntop.org/apt/ntop.key | apt-key add -
 
@@ -15,7 +17,8 @@ RUN echo "deb http://apt.ntop.org/stretch_pi armhf/" > /etc/apt/sources.list.d/n
 RUN groupadd -g 998 -r ntopng && useradd --no-log-init -u 998 -r -g ntopng ntopng
 
 RUN apt-get update && \
-    apt-get -y install ntopng
+    apt-get -y install ntopng && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN chown -R ntopng:ntopng /var/lib/ntopng
 
