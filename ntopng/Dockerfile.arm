@@ -1,4 +1,4 @@
-FROM arm32v7/debian:10
+FROM arm32v7/debian:10-slim
 MAINTAINER ntop.org
 
 RUN apt-get update && \
