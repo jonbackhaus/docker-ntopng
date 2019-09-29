@@ -42,9 +42,7 @@ jobs:
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             COMMIT_TAGNAME=${CIRCLE_SHA1:0:7}; echo "COMMIT_TAGNAME=$COMMIT_TAGNAME"
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$COMMIT_TAGNAME
-            docker tag $IMAGE_NAME:latest $IMAGE_NAME:armv7
             docker push $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:armv7
             docker push $IMAGE_NAME:$COMMIT_TAGNAME
 
 
