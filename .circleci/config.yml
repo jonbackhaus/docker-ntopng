@@ -26,24 +26,7 @@ jobs:
           root: .
           paths:
             - ./image.tar
-  test:
-    executor: docker-publisher
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - setup_remote_docker:
-          version: 18.09.3
-      - run:
-          name: Load archived Docker image
-          command: docker load -i /tmp/workspace/image.tar
-      - run:
-          name: Test Docker image
-          command: |
-            set -x
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-            docker-compose up -d
-            curl --fail -s --retry 10 --retry-connrefused http://localhost:3000 || exit 1
+
   publish:
     executor: docker-publisher
     steps:
