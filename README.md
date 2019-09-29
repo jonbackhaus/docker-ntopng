@@ -2,6 +2,8 @@
 
 This repository contains configuration files used to generate Docker images registered on [Dockerhub](https://hub.docker.com/u/ntop).
 
+CircleCI Build Status: [![CircleCI](https://circleci.com/gh/jonbackhaus/docker-ntop/tree/master.svg?style=svg&circle-token=57dec09a295a46bd9596878687f48f3e5f4f7298)](https://circleci.com/gh/jonbackhaus/docker-ntop/tree/master)
+
 ## Prerequisites
 
 In order to use the PF_RING tools or take advantage of the PF_RING acceleration when using the ntop
