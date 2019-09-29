@@ -1,4 +1,4 @@
-FROM arm32v7/debian:10
+FROM arm32v7/debian:9
 MAINTAINER ntop.org
 
 RUN apt-get update && \
@@ -11,8 +11,8 @@ RUN apt-get update && \
 
 RUN curl -L http://packages.ntop.org/apt/ntop.key | apt-key add -
 
-RUN echo "deb http://apt.ntop.org/buster_pi armhf/" > /etc/apt/sources.list.d/ntop.list && \
-    echo "deb http://apt.ntop.org/buster_pi all/" >> /etc/apt/sources.list.d/ntop.list
+RUN echo "deb http://apt.ntop.org/stretch_pi armhf/" > /etc/apt/sources.list.d/ntop.list && \
+    echo "deb http://apt.ntop.org/stretch_pi all/" >> /etc/apt/sources.list.d/ntop.list
 
 RUN groupadd -g 998 -r ntopng && useradd --no-log-init -u 998 -r -g ntopng ntopng
 
