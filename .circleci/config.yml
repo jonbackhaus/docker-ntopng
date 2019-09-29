@@ -40,14 +40,26 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            COMMIT_SHA1TAG=${CIRCLE_SHA1:0:7}; echo "COMMIT_SHA1TAG=$COMMIT_SHA1TAG"
-            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_BRANCH
-            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$COMMIT_SHA1TAG
-            docker tag $IMAGE_NAME:latest $IMAGE_NAME:armv7
+            COMMIT_TAGNAME=${CIRCLE_SHA1:0:7}; echo "COMMIT_TAGNAME=$COMMIT_TAGNAME"
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$COMMIT_TAGNAME
             docker push $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:armv7
+            docker push $IMAGE_NAME:$COMMIT_TAGNAME
+
+  publish-branch:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_BRANCH
             docker push $IMAGE_NAME:$CIRCLE_BRANCH
-            docker push $IMAGE_NAME:$COMMIT_SHA1TAG
 
 
 workflows:
@@ -59,6 +71,16 @@ workflows:
             branches:
               only: master
       - publish:
+          requires:
+            - build
+          context: default
+  build-branch:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+      - publish-branch:
           requires:
             - build
           context: default
