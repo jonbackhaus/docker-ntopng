@@ -10,7 +10,7 @@ version: '3'
 
 services:
   ntopng:
-    image: jonbackhaus/ntopng:latest
+    image: jonbackhaus/ntopng:buster
     container_name: ntopng
     network_mode: host
     ports:
