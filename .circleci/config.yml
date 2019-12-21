@@ -49,24 +49,6 @@ jobs:
             docker push $IMAGE_NAME:$COMMIT_TAGNAME
             docker push $IMAGE_NAME:$IMAGE_DATE
 
-  publish-master:
-    executor: docker-publisher
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - setup_remote_docker
-      - run:
-          name: Load archived Docker image
-          command: docker load -i /tmp/workspace/image.tar
-      - run:
-          name: Publish Docker Image to Docker Hub
-          command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            COMMIT_TAGNAME=${CIRCLE_SHA1:0:7}; echo "COMMIT_TAGNAME=$COMMIT_TAGNAME"
-            IMAGE_DATE=$(date '+%Y%m%d')
-            docker tag $IMAGE_NAME $IMAGE_NAME:$CIRCLE_BRANCH
-            docker push $IMAGE_NAME:$CIRCLE_BRANCH
-
   publish-branch:
     executor: docker-publisher
     steps:
@@ -93,10 +75,6 @@ workflows:
             branches:
               only: master
       - publish-latest:
-          requires:
-            - build
-          context: default
-      - publish-master:
           requires:
             - build
           context: default
