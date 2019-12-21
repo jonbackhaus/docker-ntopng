@@ -27,7 +27,7 @@ jobs:
           paths:
             - ./image.tar
 
-  publish:
+  publish-master:
     executor: docker-publisher
     steps:
       - attach_workspace:
@@ -73,7 +73,7 @@ workflows:
           filters:
             branches:
               only: master
-      - publish:
+      - publish-master:
           requires:
             - build
           context: default
