@@ -41,9 +41,12 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             COMMIT_TAGNAME=${CIRCLE_SHA1:0:7}; echo "COMMIT_TAGNAME=$COMMIT_TAGNAME"
+            IMAGE_DATE=$(date '+%Y%m%d')
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$COMMIT_TAGNAME
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_DATE
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$COMMIT_TAGNAME
+            docker push $IMAGE_NAME:$IMAGE_DATE
 
   publish-branch:
     executor: docker-publisher
