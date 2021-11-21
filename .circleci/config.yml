@@ -42,12 +42,11 @@ jobs:
           name: Setup buildx and qemu
           command: |
             sudo apt-get update
-            sudo apt-get install -y buildx qemu-user-static
+            sudo apt-get install -y qemu-user-static
             sudo apt-get install -y binfmt-support
       - run:
           name: Check versions
           command: |
-            buildx version
             qemu-system-arm -version 
             update-binfmts --version
       - run:
