@@ -6,6 +6,13 @@ executors:
       IMAGE_NAME: ntopng
     docker:
       - image: cimg/base:2020.01
+  executor-buildx:
+    machine:
+      image: ubuntu-2004:202111-01 
+    environment:
+      ORG_NAME: jonbackhaus
+      IMAGE_NAME: ntopng
+
 
 
 jobs:
@@ -26,6 +33,42 @@ jobs:
           root: .
           paths:
             - ./image.tar
+
+  job-build-image-buildx:
+    executor: executor-buildx
+    steps:
+      - checkout
+      - run:
+          name: Setup buildx and qemu
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y buildx qemu-user-static
+            sudo apt-get install -y binfmt-support
+      - run:
+          name: Check versions
+          command: |
+            buildx version
+            qemu-system-arm -version 
+            update-binfmts --version
+      - run:
+          name: Create Builder
+          command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            docker buildx create --name arm-builder
+            docker buildx use arm-builder
+            docker buildx inspect --bootstrap
+      - run:
+          name: Build Docker image
+          command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            IMAGE_URI=$ORG_NAME/$IMAGE_NAME; echo "IMAGE_URI=$IMAGE_URI"
+            docker buildx build --platform linux/arm/v7 -t $IMAGE_URI -f ntopng/Dockerfile.arm ntopng
+            docker save -o image.tar $IMAGE_URI
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+
 
   job-publish-latest:
     executor: executor-docker
@@ -79,17 +122,13 @@ workflows:
           context: default
   workflow-commit-branch:
     jobs:
-      - job-build-image:
+      - job-build-image-buildx:
           filters:
             branches:
               ignore: main
-      - job-publish-latest:
-          requires:
-            - "job-build-image"
-          context: default
       - job-publish-branch:
           requires:
-            - "job-build-image"
+            - "job-build-image-buildx"
           context: default
 
   workflow-nightly:
